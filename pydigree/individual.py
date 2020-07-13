@@ -46,10 +46,12 @@ class Individual(object):
             pop, lab = self.full_label
             if self.is_founder():
                 return 'Individual {}:{} (FOUNDER)'.format(pop, lab)
+            elif not self.father:
+                return 'Individual {}:{} (F:{},M:{})'.format(pop, lab, 'NONE', self.mother)
+            elif not self.mother:
+                return 'Individual {}:{} (F:{},M:{})'.format(pop, lab, self.father, 'NONE')
             else:
-                return 'Individual {}:{} (F:{},M:{})'.format(pop, lab,
-                                                             self.father.label,
-                                                             self.mother.label)
+                return 'Individual {}:{} (F:{},M:{})'.format(pop, lab, self.father, self.mother);
         except AttributeError:
             return 'Individual %s (Unlinked)' % self.label
 
@@ -69,8 +71,10 @@ class Individual(object):
         ''' Inform the parent Individuals that this is their child '''
         if self.is_founder():
             return
-        self.father.register_child(self)
-        self.mother.register_child(self)
+        elif self.father:
+            self.father.register_child(self)
+        elif self.mother:
+            self.mother.register_child(self)
 
     @property
     def full_label(self):
@@ -351,14 +355,14 @@ class Individual(object):
         :returns: Indiviual depth
         :rtype: integer
         """
-        if self.is_founder():
-            return 0
+        if self.is_founder() or not self.mother or not self.father:
+            d = 0
         elif 'depth' in self.attrib:
             return self.attrib['depth']
         else:
             d = 1 + max(self.father.depth, self.mother.depth)
-            self.attrib['depth'] = d
-            return d
+        self.attrib['depth'] = d
+        return d
 
     def remove_ancestry(self):
         """

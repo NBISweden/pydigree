@@ -71,7 +71,6 @@ def connect_individuals(pop):
         
         ind.father = pop[(fam, ind.father)] if ind.father != '0' else None
         ind.mother = pop[(fam, ind.mother)] if ind.mother != '0' else None
-
         ind.register_with_parents()
 
 

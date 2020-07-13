@@ -128,6 +128,8 @@ class Pedigree(Population):
         ind = self[indlab]
         if ind.is_founder():
             return 0.0
+        if not ind.father or not ind.mother:
+            return 0.0
         if ind.father.is_founder() or ind.mother.is_founder():
             return 0.0
         return self.kinship(ind.father.label, ind.mother.label)
